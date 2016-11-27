@@ -29,15 +29,11 @@ import com.google.android.gms.location.LocationSettingsRequest;
 import com.google.android.gms.location.LocationSettingsResult;
 import com.google.android.gms.location.LocationSettingsStatusCodes;
 
+import ru.romanzes.daggerforidiots.Constants;
 import ru.romanzes.daggerforidiots.R;
 
 public class MainActivity extends AppCompatActivity implements GoogleApiClient.ConnectionCallbacks,
         GoogleApiClient.OnConnectionFailedListener, LocationListener {
-    private static final int REQUEST_LOCATION_PERMISSION = 1;
-    private static final int REQUEST_ENABLE_LOCATION = 2;
-
-    private static final int UPDATE_INTERVAL = 60000;
-
     private ProgressBar progress;
     private TextView tvMessage;
     private Button btnRetry;
@@ -81,7 +77,7 @@ public class MainActivity extends AppCompatActivity implements GoogleApiClient.C
 
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
-        if (requestCode == REQUEST_ENABLE_LOCATION) {
+        if (requestCode == Constants.RequestCode.ENABLE_LOCATION) {
             if (resultCode == Activity.RESULT_OK) {
                 startLocationUpdates();
             } else {
@@ -94,7 +90,7 @@ public class MainActivity extends AppCompatActivity implements GoogleApiClient.C
     public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions,
                                            @NonNull int[] grantResults) {
         switch (requestCode) {
-            case REQUEST_LOCATION_PERMISSION:
+            case Constants.RequestCode.LOCATION_PERMISSION:
                 if (grantResults.length > 0
                         && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
                     obtainLocation();
@@ -130,7 +126,7 @@ public class MainActivity extends AppCompatActivity implements GoogleApiClient.C
         } else {
             ActivityCompat.requestPermissions(this,
                     new String[] { Manifest.permission.ACCESS_COARSE_LOCATION, Manifest.permission.ACCESS_FINE_LOCATION },
-                    REQUEST_LOCATION_PERMISSION);
+                    Constants.RequestCode.LOCATION_PERMISSION);
         }
     }
 
@@ -145,8 +141,8 @@ public class MainActivity extends AppCompatActivity implements GoogleApiClient.C
 
     private void startLocationUpdates() {
         LocationRequest locationRequest = new LocationRequest();
-        locationRequest.setFastestInterval(UPDATE_INTERVAL);
-        locationRequest.setInterval(UPDATE_INTERVAL);
+        locationRequest.setFastestInterval(Constants.LOCATION_UPDATE_INTERVAL);
+        locationRequest.setInterval(Constants.LOCATION_UPDATE_INTERVAL);
         locationRequest.setPriority(LocationRequest.PRIORITY_BALANCED_POWER_ACCURACY);
         checkSettings(locationRequest);
     }
@@ -168,7 +164,7 @@ public class MainActivity extends AppCompatActivity implements GoogleApiClient.C
                         break;
                     case LocationSettingsStatusCodes.RESOLUTION_REQUIRED:
                         try {
-                            status.startResolutionForResult(MainActivity.this, REQUEST_ENABLE_LOCATION);
+                            status.startResolutionForResult(MainActivity.this, Constants.RequestCode.ENABLE_LOCATION);
                         } catch (IntentSender.SendIntentException ignored) {}
                         break;
                     case LocationSettingsStatusCodes.SETTINGS_CHANGE_UNAVAILABLE:
